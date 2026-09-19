@@ -21,24 +21,25 @@ typedef enum {
     VGA_COLOR_WHITE         = 15
 } VgaColor;
 
-/// Initializes the terminal
+// init screen
 extern void term_init(void);
 
-/// Clear the terminal
+// clear screen
 extern void term_clear(void);
 
-/// Put a single character onto the terminal
+// put char
 extern void term_putc(char c);
 
-/// Put a string (chars) onto the terminal
+// put string
 extern void term_puts(const char *s);
 
-/// Set a new color for the terminal
+// set color
 extern void term_set_color(VgaColor fg, VgaColor bg);
 
-/// Save the current color for the terminal
-/// Note: Use this when you need to set the color back and forth
+// save color
+// TODO: stack saved colors
 extern void term_save_color();
 
-/// Reset the color based on the saved color
+// load color
+// FIXME: check empty save
 extern void term_reset_color();

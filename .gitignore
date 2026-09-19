@@ -3,3 +3,5 @@
 *.d
 *.iso
 !grub.cfg
+build/
+isodir/

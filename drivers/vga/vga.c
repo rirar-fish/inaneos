@@ -14,7 +14,7 @@ static unsigned char attr = 0x0F;
 static VgaColor saved_fg = VGA_COLOR_WHITE;
 static VgaColor saved_bg = VGA_COLOR_BLACK;
 
-/// Update the cursor based on the new position
+// move cursor
 static void update_cursor(void) {
   unsigned short pos = row * COLS + col;
   outb(0x3D4, 0x0F);
@@ -23,19 +23,20 @@ static void update_cursor(void) {
   outb(0x3D5, (unsigned char)(pos >> 8));
 }
 
-/// Scroll the VGA buffer up by one row.
+// scroll up
 static void scroll(void) {
   for (int i = 0; i < (ROWS - 1) * COLS; i++)
     vga[i] = vga[i + COLS];
 
-  // clear the last row and fill it with spaces using the current attribute.
+  // clear last row
   for (int i = (ROWS - 1) * COLS; i < ROWS * COLS; i++)
     vga[i] = (unsigned short)((attr << 8) | ' ');
 
-  // move the cursor to the beginning of the last row.
+  // back to last row
   row = ROWS - 1;
 }
 
+// TODO: add colors
 void term_init(void) {
   attr = 0x0F;
   term_clear();
@@ -70,18 +71,18 @@ void term_putc(char c) {
     vga[row * COLS + col] = (unsigned short)((attr << 8) | (unsigned char)c);
     col++;
 
-    // wraps to another row if the column is exceeding the COLS
+    // wrap line
     if (col >= COLS) {
       col = 0;
       row++;
     }
   }
 
-  // scroll down by 1 row if the current row is exceeding the ROWS
+  // scroll if full
   if (row >= ROWS)
     scroll();
 
-  // update the cursor by the new position
+  // move cursor
   update_cursor();
 }
 
@@ -91,6 +92,7 @@ void term_puts(const char *s) {
 }
 
 void term_set_color(VgaColor fg, VgaColor bg) {
+  // FIXME: check bad color
   attr = (unsigned char)((bg << 4) | (fg & 0x0F));
 }
 

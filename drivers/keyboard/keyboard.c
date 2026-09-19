@@ -31,6 +31,7 @@ static volatile int head = 0, tail = 0;
 
 static void push(char c) {
   int next = (head + 1) % BUFSIZE;
+  // FIXME: drop when full
   if (next == tail)
     return;
   buf[head] = c;
@@ -47,6 +48,7 @@ int getchar(void) {
 
 void keyboard_handler(void) {
   unsigned char sc = inb(0x60);
+  // TODO: picks shift keys
   print_hex_byte(sc);
   if (!(sc & 0x80)) {
     char c = kbd_map[sc];
@@ -57,8 +59,36 @@ void keyboard_handler(void) {
 }
 
 __attribute__((naked)) void irq1_stub(void) {
-  __asm__ volatile("pusha\n"
+  __asm__ volatile("push %rax\n"
+                   "push %rcx\n"
+                   "push %rdx\n"
+                   "push %rbx\n"
+                   "push %rbp\n"
+                   "push %rsi\n"
+                   "push %rdi\n"
+                   "push %r8\n"
+                   "push %r9\n"
+                   "push %r10\n"
+                   "push %r11\n"
+                   "push %r12\n"
+                   "push %r13\n"
+                   "push %r14\n"
+                   "push %r15\n"
                    "call keyboard_handler\n"
-                   "popa\n"
-                   "iret\n");
+                   "pop %r15\n"
+                   "pop %r14\n"
+                   "pop %r13\n"
+                   "pop %r12\n"
+                   "pop %r11\n"
+                   "pop %r10\n"
+                   "pop %r9\n"
+                   "pop %r8\n"
+                   "pop %rdi\n"
+                   "pop %rsi\n"
+                   "pop %rbp\n"
+                   "pop %rbx\n"
+                   "pop %rdx\n"
+                   "pop %rcx\n"
+                   "pop %rax\n"
+                   "iretq\n");
 }

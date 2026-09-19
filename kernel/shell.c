@@ -41,6 +41,7 @@ static void running(const char *line) {
     for (;;)
       __asm__ volatile("hlt");
   } else {
+    // TODO: add more cmds
     term_puts(line);
     term_puts(": Command Not Found\n");
   }
@@ -48,6 +49,7 @@ static void running(const char *line) {
 
 void shell_run(void) {
   char line[128];
+  // FIXME: check long input
 
   for (;;) {
     term_set_color(0x0A, 0x00);

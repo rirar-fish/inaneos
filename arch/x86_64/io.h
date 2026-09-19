@@ -16,8 +16,6 @@ static inline void sti() { __asm__ volatile("sti"); }
 static inline void cli() { __asm__ volatile("cli"); }
 
 static inline void io_wait() {
-  // regardless the value
-  // it will create a tiny delay to wait
-  // the io work to be finished
+  // short delay
   __asm__ volatile("outb %%al, $0x80" : : "a"(0));
 }

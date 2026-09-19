@@ -2,13 +2,16 @@
 #include "keyboard.h"
 #include "vga.h"
 #include "io.h"
+#include <stdint.h>
 
 struct gate {
-    unsigned short offset_low;
-    unsigned short selector;
-    unsigned char zero;
-    unsigned char type_attr;
-    unsigned short offset_high;
+    uint16_t offset_low;
+    uint16_t selector;
+    uint8_t ist;
+    uint8_t type_attr;
+    uint16_t offset_mid;
+    uint32_t offset_high;
+    uint32_t zero;
 } __attribute__((packed));
 
 static struct gate idt[256];
@@ -19,15 +22,18 @@ static unsigned short current_cs(void) {
     return cs;
 }
 
-void idt_set_gate(int n, unsigned int handler) {
+void idt_set_gate(int n, uint64_t handler) {
     idt[n].offset_low = handler & 0xFFFF;
-    idt[n].selector    = current_cs();      // segment kode milik GRUB
-    idt[n].zero        = 0;
+    idt[n].selector    = current_cs(); // grub seg
+    idt[n].ist         = 0;
     idt[n].type_attr   = 0x8E;
-    idt[n].offset_high = (handler >> 16) & 0xFFFF;
+    idt[n].offset_mid  = (handler >> 16) & 0xFFFF;
+    idt[n].offset_high = (handler >> 32) & 0xFFFFFFFF;
+    idt[n].zero        = 0;
 }
 
-// Dipanggil jika CPU mengalami exception (page fault, divide by zero, dll)
+// cpu fault
+// TODO: print fault number
 void panic(void) {
     term_set_color(0x0C, 0x00);
     term_puts("\n*** EXCEPTION! CPU menemukan kondisi fatal ***\n");
@@ -37,7 +43,21 @@ void panic(void) {
 __attribute__((naked))
 void exception_stub(void) {
     __asm__ volatile(
-        "pusha\n"
+        "push %rax\n"
+        "push %rcx\n"
+        "push %rdx\n"
+        "push %rbx\n"
+        "push %rbp\n"
+        "push %rsi\n"
+        "push %rdi\n"
+        "push %r8\n"
+        "push %r9\n"
+        "push %r10\n"
+        "push %r11\n"
+        "push %r12\n"
+        "push %r13\n"
+        "push %r14\n"
+        "push %r15\n"
         "call panic\n"
         "1: hlt\n"
         "jmp 1b"
@@ -45,14 +65,14 @@ void exception_stub(void) {
 }
 
 void idt_init(void) {
-    struct { unsigned short limit; unsigned int base; } __attribute__((packed))
-        p = { sizeof(idt) - 1, (unsigned int)idt };
+    struct { uint16_t limit; uint64_t base; } __attribute__((packed))
+        p = { sizeof(idt) - 1, (uint64_t)idt };
 
     for (int i = 0; i < 32; i++)
-        idt_set_gate(i, (unsigned int)exception_stub);
+        idt_set_gate(i, (uint64_t)exception_stub);
 
-
-    idt_set_gate(0x21, (unsigned int)irq1_stub);
+    // FIXME: add more IRQs
+    idt_set_gate(0x21, (uint64_t)irq1_stub);
 
     __asm__ volatile("lidt %0" :: "m"(p));
 }
