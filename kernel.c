@@ -1,9 +1,16 @@
 // main kernel
 // module
-
+#ifndef __wasm__
 #include "idt.h"
-#include "io.h"
 #include "keyboard.h"
+
+extern void js_putchar(char c);
+void term_putc(char c) {
+    js_putchar(c);
+}
+#endif
+
+#include "io.h"
 #include "shell.h"
 #include "vga.h"
 #include <stdint.h>
@@ -69,6 +76,12 @@ typedef struct {
   uint8_t framebuffer_type;    // 109
 } multiboot_info;
 
+#ifdef  __wasm__
+void kernel_main(void){
+    shell_run();
+}
+#else
+
 void kernel_main(unsigned int magic, unsigned int mbi_addr) {
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
     return;
@@ -103,3 +116,4 @@ void kernel_main(unsigned int magic, unsigned int mbi_addr) {
   // TODO: idt + pic next
   // TODO: tiny shell
 }
+#endif

@@ -21,6 +21,32 @@ typedef enum {
     VGA_COLOR_WHITE         = 15
 } VgaColor;
 
+#ifdef __wasm__
+
+extern void js_putchar(char c);
+
+static inline void term_init(void) {}
+static inline void term_clear(void) {}
+
+static inline void term_putc(char c) {
+    js_putchar(c);
+}
+
+static inline void term_puts(const char *s) {
+    while (*s) {
+        js_putchar(*s++);
+    }
+}
+
+static inline void term_set_color(VgaColor fg, VgaColor bg) {
+    (void)fg;
+    (void)bg;
+}
+
+static inline void term_save_color(void) {}
+static inline void term_reset_color(void) {}
+
+#else
 /// Initializes the terminal
 extern void term_init(void);
 
@@ -42,3 +68,4 @@ extern void term_save_color();
 
 /// Reset the color based on the saved color
 extern void term_reset_color();
+#endif

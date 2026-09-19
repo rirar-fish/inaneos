@@ -2,6 +2,24 @@
 #pragma once
 #include <stdint.h>
 
+#ifdef __wasm__
+
+static inline void outb(unsigned short port, unsigned char val) {
+    (void)port;
+    (void)val;
+}
+
+static inline unsigned char inb(unsigned short port) {
+    (void)port;
+    return 0;
+}
+
+static inline void sti(void) {}
+static inline void cli(void) {}
+static inline void io_wait(void) {}
+static inline void halt(void) {}
+#else
+
 static inline void outb(unsigned short port, unsigned char val) {
   __asm__ volatile("outb %0, %1" ::"a"(val), "Nd"(port));
 }
@@ -21,3 +39,9 @@ static inline void io_wait() {
   // the io work to be finished
   __asm__ volatile("outb %%al, $0x80" : : "a"(0));
 }
+
+static inline void halt(void) {
+    __asm__ volatile("hlt");
+}
+
+#endif

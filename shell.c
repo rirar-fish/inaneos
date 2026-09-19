@@ -1,7 +1,10 @@
 #include "shell.h"
 #include "io.h"
-#include "keyboard.h"
 #include "vga.h"
+
+#ifndef __wasm__
+#include "keyboard.h"
+#endif
 
 static int same_condition(const char *a, const char *b) {
   while (*a && *a == *b) {
@@ -37,15 +40,53 @@ static void running(const char *line) {
   } else if (same_condition(line, "info")) {
     term_puts("Inaneos beta 0.0 version\n");
   } else if (same_condition(line, "reboot")) {
+#ifndef  __wasm__
+    term_puts("rebooting wasm env... \n");
+#else
     outb(0x64, 0xFE);
     for (;;)
-      __asm__ volatile("hlt");
+      halt();
+#endif
   } else {
     term_puts(line);
     term_puts(": Command Not Found\n");
   }
 }
 
+#ifndef __wasm__
+
+static char wasm_line[128];
+static int wasm_idx = 0;
+
+static void print_promt(void) {
+    term_set_color(0x0A, 0x00);
+    term_puts("$ ");
+    term_set_color(0x0F, 0x00);
+}
+
+void shell_run(void) {
+    wasm_idx = 0;
+    print_promt();
+}
+
+void shell_handle_key(char c) {
+    if (c == '\n' || c == '\r') {
+        term_putc('\n');
+        wasm_line[wasm_idx] = '\0';
+        running(wasm_line);
+        wasm_idx=0;
+        print_promt();
+    } else if (c == '\b') {
+        if (wasm_idx > 0) {
+            wasm_idx--;
+            term_putc('\b');
+        }
+    } else if (c >= 32 && c < 127 && wasm_idx < (int)sizeof(wasm_line) - 1) {
+        wasm_line[wasm_idx++] = c;
+    }
+}
+
+#else
 void shell_run(void) {
   char line[128];
 
@@ -74,3 +115,5 @@ void shell_run(void) {
     running(line);
   }
 }
+
+#endif

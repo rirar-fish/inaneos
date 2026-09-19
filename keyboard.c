@@ -39,7 +39,7 @@ static void push(char c) {
 
 int getchar(void) {
   while (tail == head)
-    __asm__ volatile("hlt");
+    halt();
   char c = buf[tail];
   tail = (tail + 1) % BUFSIZE;
   return c;

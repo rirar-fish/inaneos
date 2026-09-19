@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title> inaneos web preview </title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+        }
+        #screen {
+            background-color: #000;
+            border: 2px solid #333;
+            padding: 10px;
+            white-space: pre-wrap;
+            min-height: 400px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>inaneos (WASM mode)</h1>
+    <div id="screen">inane</div>
+    <script>
+      const screen = document.getElementById("screen");
+      const memory = new WebAssembly.Memory({ initial: 256, maximum:256});
+      const importObject = {
+        env: {
+          memory: memory,
+          js_putcha: function(c) => {
+            if (c === 8) {
+              if (!screen.textContent.endWith("$ ")) {
+                screen.textContent = screen.textContent.slice(0, -1);
+              }
+            } else {
+              screen.textContent += String.fromCharCode(c);
+            }
+          },
+          term_ser_color: (fg, bg) => {
+
+          },
+          term_init: () = {
+            screen.textContext = "";
+          }
+        }
+      };
+      WebAssembly.instantiateStreaming(fetch("inaneos.wasm"), importObject)
+        .then(obj => {
+          screen.textContent = "web preview inaneos loaded!\n\n";
+          const wasm = obj.instance.exports;
+          console.log("expf : ",wasm);
+
+          if (typeof wasm.kernel_main === "function") {
+            wasm.kernel_main();
+            screen.textContect += "[OK] loaded \n";
+          } else {
+            screen.textContect += "[X] func kernel_main not found \n";
+          }
+        })
+        .catch(err => {
+          screen.textContent = " [X] err loading wasm " + err;
+          console.error(err);
+        })
+    </script>
+</body>
+</html>
