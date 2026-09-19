@@ -90,7 +90,7 @@ void kernel_main(unsigned int magic, unsigned int mbi_addr) {
   }
 
   term_init();
-  term_puts("inaneos v0.0.3\n");
+  term_puts("inaneos beta 0.0.1\n");
 
   idt_init();
   pic_init();

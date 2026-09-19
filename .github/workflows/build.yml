@@ -14,11 +14,11 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc gcc-multilib make grub-pc-bin xorriso mtools
+          sudo apt-get install -y gcc make grub-pc-bin xorriso mtools
       - name: Build OS image
         run: make
       - name: Verify multiboot header
-        run: grub-file --is-x86-multiboot kernel.elf
+        run: grub-file --is-x86-multiboot build/kernel.elf
       - name: Upload OS image
         uses: actions/upload-artifact@v4
         with:
