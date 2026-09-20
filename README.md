@@ -20,7 +20,9 @@ in case like we need direct hardware access
 
 Inaneos is a os and kernel from scratch type monolitics x86_64  in qemu with grub bootloader via multiboot. Languange we use is a C and Assembly, mybe jst for right now
 
+
 ---
+
 ## Structure module:
 ```
 boot/grub/grub.cfg
@@ -33,16 +35,24 @@ drivers/keyboard/*.c/h  // irq1
 kernel/kernel.c  //kernel main
 kernel/shell.c/h  // shell run(fs ram only)
 ```
-### Dependencies just to try:
+
 ---
+
+
+### Dependencies just to try:
+
 -> qemu
 -> xorriso
 -> gcc
 -> grub-mkrescue tool
 -> make
 
-### INSTALATION
+
 ---
+
+
+## INSTALATION
+
 - install inaneos in [release](https://github.com/reyzzzl/inaneos/releases/tag/beta-0.0.1)
 ---
 
@@ -68,3 +78,15 @@ make clean
 
 > description:
 just delete non programmed file or compiled file
+
+---
+
+
+## next update
+
+- userspace
+- syscall
+- memory manager
+- disk system
+- scheduler
+- any drivers
