@@ -40,7 +40,7 @@ static void running(const char *line) {
   } else if (same_condition(line, "info")) {
     term_puts("Inaneos beta 0.0 version\n");
   } else if (same_condition(line, "reboot")) {
-#ifndef  __wasm__
+#ifdef  __wasm__
     term_puts("rebooting wasm env... \n");
 #else
     outb(0x64, 0xFE);
@@ -53,7 +53,7 @@ static void running(const char *line) {
   }
 }
 
-#ifndef __wasm__
+#ifdef __wasm__
 
 static char wasm_line[128];
 static int wasm_idx = 0;
@@ -69,6 +69,7 @@ void shell_run(void) {
     print_promt();
 }
 
+__attribute__((export_name("shell_handle_key")))
 void shell_handle_key(char c) {
     if (c == '\n' || c == '\r') {
         term_putc('\n');
@@ -83,6 +84,7 @@ void shell_handle_key(char c) {
         }
     } else if (c >= 32 && c < 127 && wasm_idx < (int)sizeof(wasm_line) - 1) {
         wasm_line[wasm_idx++] = c;
+        term_putc(c);
     }
 }
 

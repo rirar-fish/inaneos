@@ -2,4 +2,9 @@
 *.elf
 *.d
 *.iso
+inaneos.wasm
+inaneos-x86.elf
+inaneos-x86.iso
+build
+.env
 !grub.cfg

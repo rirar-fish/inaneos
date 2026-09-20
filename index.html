@@ -17,52 +17,71 @@
             white-space: pre-wrap;
             min-height: 400px;
             font-size: 16px;
+            line-height: 1.4;
+            outline: none;
         }
     </style>
 </head>
 <body>
     <h1>inaneos (WASM mode)</h1>
-    <div id="screen">inane</div>
+    <div id="screen" tabindex="0">inane</div>
     <script>
       const screen = document.getElementById("screen");
+
+      screen.focus();
+
+      let wasmInstance = null;
       const memory = new WebAssembly.Memory({ initial: 256, maximum:256});
       const importObject = {
         env: {
           memory: memory,
-          js_putcha: function(c) => {
+          js_putchar: (c) => {
             if (c === 8) {
-              if (!screen.textContent.endWith("$ ")) {
+              if (!screen.textContent.endsWith("$ ")) {
                 screen.textContent = screen.textContent.slice(0, -1);
               }
             } else {
               screen.textContent += String.fromCharCode(c);
             }
           },
-          term_ser_color: (fg, bg) => {
+          term_set_color: (fg, bg) => {
 
           },
-          term_init: () = {
-            screen.textContext = "";
-          }
         }
       };
       WebAssembly.instantiateStreaming(fetch("inaneos.wasm"), importObject)
         .then(obj => {
+          wasmInstance = obj.instance.exports;
           screen.textContent = "web preview inaneos loaded!\n\n";
           const wasm = obj.instance.exports;
-          console.log("expf : ",wasm);
+          console.log("expf : ",wasmInstance);
 
           if (typeof wasm.kernel_main === "function") {
             wasm.kernel_main();
-            screen.textContect += "[OK] loaded \n";
+            screen.textContent += "[OK] loaded \n";
           } else {
-            screen.textContect += "[X] func kernel_main not found \n";
+            screen.textContent += "[X] func kernel_main not found \n";
           }
         })
         .catch(err => {
           screen.textContent = " [X] err loading wasm " + err;
           console.error(err);
         })
+      document.addEventListener("keydown", (e) => {
+        if (!wasmInstance || typeof wasmInstance.shell_handle_key !== "function") {
+          return;
+        }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          wasmInstance.shell_handle_key(10);
+        } else if (e.key === "Backspace") {
+          e.preventDefault();
+          wasmInstance.shell_handle_key(8);
+        } else if (e.key.length === 1) {
+          e.preventDefault();
+          wasmInstance.shell_handle_key(e.key.charCodeAt(0));
+        }
+      });
     </script>
 </body>
 </html>

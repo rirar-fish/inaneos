@@ -3,11 +3,6 @@
 #ifndef __wasm__
 #include "idt.h"
 #include "keyboard.h"
-
-extern void js_putchar(char c);
-void term_putc(char c) {
-    js_putchar(c);
-}
 #endif
 
 #include "io.h"
@@ -77,6 +72,7 @@ typedef struct {
 } multiboot_info;
 
 #ifdef  __wasm__
+__attribute__((export_name("kernel_main")))
 void kernel_main(void){
     shell_run();
 }

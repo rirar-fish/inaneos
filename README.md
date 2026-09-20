@@ -7,11 +7,16 @@ Dependencies just to try:
 -> gcc
 -> grub-mkrescue tool
 -> make
+optional dependencies
+-> python
+-> clang
+//if you want an web base for showcase
 
 how to use
-<shell> make run
+<shell> make run{wasm/x86}
 description:
 to build and run the file instantly
+setup server or run via qemu depending which one did you run
 
 <shell> make all
 description:

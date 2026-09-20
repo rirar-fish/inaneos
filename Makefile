@@ -44,7 +44,7 @@ runwasm: inaneos.wasm
 	python3 -m http.server 8080
 
 clean:
-	rm -rf build kernel.elf inaneos.wasm os.iso isodir
+	rm -rf *.o build inaneos-x86.elf inaneos.wasm inaneos-x86.iso isodir
 
 -include $(OBJS_x86:.o=.d)
 -include $(OBJS_wasm:.o=.d)
