@@ -31,7 +31,7 @@
       screen.focus();
 
       let wasmInstance = null;
-      const memory = new WebAssembly.Memory({ initial: 256, maximum:256});
+      const memory = new WebAssembly.Memory({address: "i64", initial: 256n, maximum:256n});
       const importObject = {
         env: {
           memory: memory,

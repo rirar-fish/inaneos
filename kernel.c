@@ -1,18 +1,11 @@
 // main kernel
 // module
-#ifndef __wasm__
-#include "idt.h"
-#include "keyboard.h"
-#endif
-
 #include "io.h"
 #include "shell.h"
 #include "vga.h"
 #include <stdint.h>
 
 #define MULTIBOOT_BOOTLOADER_MAGIC 0x2BADB002
-#define MULTIBOOT_INFO_MEM_MAP 0x00000040
-#define MULTIBOOT_MEMORY_AVAILABLE 1
 
 typedef struct {
   uint32_t size;
@@ -84,14 +77,14 @@ void kernel_main(unsigned int magic, unsigned int mbi_addr) {
 
   multiboot_info *mbi = (multiboot_info *)(uintptr_t)mbi_addr;
 
-  if (mbi->flags & MULTIBOOT_INFO_MEM_MAP) {
+  if (mbi->flags & 0x00000040) {
     uint8_t *current = (uint8_t *)(uintptr_t)mbi->mmap_addr;
     uint8_t *end = current + mbi->mmap_length;
 
     while (current < end) {
       multiboot_mmap_entry *entry = (multiboot_mmap_entry *)current;
 
-      if (entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
+      if (entry->type == 1) {
         // This region can potentially be given to the PMM (Physical Memory
         // Manager).
         // TODO: PMM
@@ -104,9 +97,6 @@ void kernel_main(unsigned int magic, unsigned int mbi_addr) {
   term_init();
   term_puts("inaneos v0.0.3\n");
 
-  idt_init();
-  pic_init();
-  sti();
 
   shell_run();
   // TODO: idt + pic next

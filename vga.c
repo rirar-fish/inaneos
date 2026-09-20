@@ -1,5 +1,4 @@
 // vga.c - 80x25
-
 #include "vga.h"
 #include "io.h"
 
