@@ -2,6 +2,7 @@
 *.elf
 *.d
 *.iso
+*.img
 !grub.cfg
 build/
 isodir/

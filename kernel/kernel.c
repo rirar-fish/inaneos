@@ -2,22 +2,19 @@
 // module
 
 #include "idt.h"
+#include "exec.h"
+#include "fs.h"
+#include "gdt.h"
 #include "io.h"
 #include "keyboard.h"
-#include "shell.h"
+#include "pmm.h"
+#include "part.h"
+#include "syscall.h"
 #include "vga.h"
 #include <stdint.h>
 
 #define MULTIBOOT_BOOTLOADER_MAGIC 0x2BADB002
 #define MULTIBOOT_INFO_MEM_MAP 0x00000040
-#define MULTIBOOT_MEMORY_AVAILABLE 1
-
-typedef struct {
-  uint32_t size;
-  uint64_t addr;
-  uint64_t len;
-  uint32_t type;
-} __attribute__((packed)) multiboot_mmap_entry;
 
 typedef struct {
   uint32_t flags;
@@ -74,28 +71,35 @@ void kernel_main(unsigned int magic, unsigned int mbi_addr) {
 
   multiboot_info *mbi = (multiboot_info *)(uintptr_t)mbi_addr;
 
-  if (mbi->flags & MULTIBOOT_INFO_MEM_MAP) {
-    uint8_t *current = (uint8_t *)(uintptr_t)mbi->mmap_addr;
-    uint8_t *end = current + mbi->mmap_length;
-
-    while (current < end) {
-      multiboot_mmap_entry *entry = (multiboot_mmap_entry *)current;
-
-      if (entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
-        // TODO: feed free mem to PMM
-      }
-
-      current += entry->size + sizeof(entry->size);
-    }
-  }
+  // feed mem map to PMM
+  if (mbi->flags & MULTIBOOT_INFO_MEM_MAP)
+    pmm_init(mbi->mmap_addr, mbi->mmap_length);
 
   term_init();
-  term_puts("inaneos beta 0.0.1\n");
+  gdt_install();
 
   idt_init();
   pic_init();
+  syscall_init();
+  fs_init();
+  part_scan();
+  if (part_count() > 0)
+    fs_mount_part(0); // disk first if present
   sti();
 
-  shell_run();
+  // load init program
+  if (mbi->mods_count < 1) {
+    term_puts("no init module\n");
+    for (;;)
+      __asm__ volatile("hlt");
+  }
+  exec_init_mods(mbi->mods_addr, mbi->mods_count);
+  if (enter_program(0, 0) != 0) {
+    term_puts("bad init elf\n");
+    for (;;)
+      __asm__ volatile("hlt");
+  }
+  for (;;)
+    __asm__ volatile("hlt");
   // FIXME: handle bad magic
 }

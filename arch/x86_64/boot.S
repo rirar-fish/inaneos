@@ -18,6 +18,7 @@ gdt64_ptr:
 
 .section .bss
 .align 4096
+.globl pml4
 pml4:
 .skip 4096
 pdpt:
@@ -53,12 +54,12 @@ _start:
 
     movl $pdpt, %edi
     movl $pd, %eax
-    orl $0x03, %eax
+    orl $0x07, %eax
     movl %eax, (%edi)
 
     movl $pml4, %edi
     movl $pdpt, %eax
-    orl $0x03, %eax
+    orl $0x07, %eax
     movl %eax, (%edi)
 
     movl $pml4, %eax

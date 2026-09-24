@@ -12,18 +12,14 @@ static const char kbd_map[128] = {
     'b', 'n', 'm',  ',',  '.',  '/', 0,   '*',  0,   ' ', 0,
 };
 
-static const char hex_digits[] = "0123456789ABCDEF";
-
-static void serial_putc(char c) {
-  while (!(inb(0x3FD) & 0x20));
-  outb(0x3F8, c);
-}
-
-static void print_hex_byte(unsigned char b) {
-  serial_putc(hex_digits[(b >> 4) & 0xF]);
-  serial_putc(hex_digits[b & 0xF]);
-  serial_putc(' ');
-}
+// shifted layer, us layout
+static const char shift_map[128] = {
+    0,   27,  '!',  '@',  '#',  '$', '%', '^',  '&', '*', '(', ')',
+    '_', '+', '\b', '\t', 'Q',  'W', 'E', 'R',  'T', 'Y', 'U', 'I',
+    'O', 'P', '{',  '}',  '\n', 0,   'A',  'S',  'D', 'F', 'G', 'H',
+    'J', 'K', 'L',  ':',  '"',  '~', 0,   '|',  'Z', 'X', 'C', 'V',
+    'B', 'N', 'M',  '<',  '>',  '?', 0,   '*',  0,   ' ', 0,
+};
 
 #define BUFSIZE 32
 static volatile char buf[BUFSIZE];
@@ -41,20 +37,67 @@ static void push(char c) {
 int getchar(void) {
   while (tail == head)
     __asm__ volatile("hlt");
-  char c = buf[tail];
+  unsigned char c = buf[tail];
   tail = (tail + 1) % BUFSIZE;
   return c;
 }
 
+static int e0;
+static int shift;
+static int caps;
+
+// pure decode, host-testable
+// out: 0 drop, else char (or KEY_*)
+int kbd_decode(unsigned char sc, int *e0s, int *shifts, int *capsv) {
+  if (sc == 0xE0) {
+    *e0s = 1;
+    return 0;
+  }
+  if (sc == 0x2A || sc == 0x36) {
+    *shifts = 1;
+    return 0;
+  }
+  if (sc == 0xAA || sc == 0xB6) {
+    *shifts = 0;
+    return 0;
+  }
+  if (sc == 0x3A) { // caps toggle
+    *capsv = !*capsv;
+    return 0;
+  }
+  if (*e0s) {
+    *e0s = 0;
+    if (sc & 0x80)
+      return 0;
+    if (sc == 0x48)
+      return KEY_UP;
+    if (sc == 0x50)
+      return KEY_DOWN;
+    if (sc == 0x4B)
+      return KEY_LEFT;
+    if (sc == 0x4D)
+      return KEY_RIGHT;
+    if (sc == 0x53)
+      return KEY_DEL;
+    return 0;
+  }
+  if (sc >= 128 || (sc & 0x80))
+    return 0;
+  {
+    char base = kbd_map[sc];
+    if (!base)
+      return 0;
+    if (base >= 'a' && base <= 'z')
+      return ((*shifts != 0) != (*capsv != 0)) ? base - 32 : base;
+    return *shifts ? shift_map[sc] : base;
+  }
+}
+
 void keyboard_handler(void) {
   unsigned char sc = inb(0x60);
-  // TODO: picks shift keys
-  print_hex_byte(sc);
-  if (!(sc & 0x80)) {
-    char c = kbd_map[sc];
-    if (c)
-      push(c);
-  }
+  int c = kbd_decode(sc, &e0, &shift, &caps);
+  if (c)
+    push((char)c);
   outb(0x20, 0x20);
 }
 

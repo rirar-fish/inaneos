@@ -33,6 +33,12 @@ extern void term_putc(char c);
 // put string
 extern void term_puts(const char *s);
 
+// put bytes
+extern void term_write(const char *s, unsigned long len);
+
+// move cursor
+extern void term_goto(int row, int col);
+
 // set color
 extern void term_set_color(VgaColor fg, VgaColor bg);
 
