@@ -45,6 +45,29 @@ $(CALC_ELF): build/obj-user/user/calc.o build/obj-user/user/expr.o $(USER_COMMON
 $(KEO_ELF): build/obj-user/user/keo.o $(USER_COMMON) $(USER_LINKER)
 	ld -m elf_x86_64 -static -z noexecstack -T $(USER_LINKER) -o $@ build/obj-user/user/keo.o $(USER_COMMON)
 
+# wasm browser preview (branch feat/wasm), opt-in, does not affect os.iso.
+# Reuses the portable evaluator user/expr.c; JS harness in web/index.html.
+WASM_CC = clang
+WASM_CFLAGS = --target=wasm32 -nostdlib -O2 -Wall -Wextra -Iuser -Iwasm -g -MMD -MP
+WASM_LDFLAGS = -Wl,--no-entry -Wl,--export-all -Wl,--allow-undefined -Wl,--import-memory
+WASM_SRCS_C = wasm/wasm_shell.c user/expr.c
+WASM_OBJS = $(patsubst %.c,build/wasm/%.o,$(WASM_SRCS_C))
+WASM_DEPS = $(WASM_OBJS:.o=.d)
+WASM_OUT = web/inaneos.wasm
+
+wasm: $(WASM_OUT)
+
+$(WASM_OUT): $(WASM_OBJS)
+	mkdir -p $(dir $@)
+	$(WASM_CC) $(WASM_CFLAGS) $(WASM_LDFLAGS) -o $@ $(WASM_OBJS)
+
+build/wasm/%.o: %.c
+	mkdir -p $(dir $@)
+	$(WASM_CC) $(WASM_CFLAGS) -c $< -o $@
+
+runwasm: $(WASM_OUT)
+	python3 -m http.server 8080 --directory web
+
 build/obj-user/%.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(USER_CFLAGS) -c $< -o $@
@@ -80,8 +103,10 @@ clean:
 	rm -rf build os.iso
 	rm -f kernel.elf *.o *.d
 	rm -rf isodir
+	rm -f web/inaneos.wasm
 
-.PHONY: all run clean
+.PHONY: all run clean wasm runwasm
 
 -include $(DEPS)
 -include $(USER_DEPS)
+-include $(WASM_DEPS)
