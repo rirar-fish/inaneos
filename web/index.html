@@ -14,68 +14,105 @@
             background-color: #000;
             border: 2px solid #333;
             padding: 10px;
-            white-space: pre-wrap;
-            min-height: 400px;
             font-size: 16px;
-            line-height: 1.4;
+            line-height: 1.25;
             outline: none;
+            user-select: none;
         }
+        #screen .row { white-space: pre; display: block; height: 1.25em; }
+        #screen .cursor { outline: 1px solid #fff; }
+        #bar { margin-top: 8px; color: #888; }
+        #bar button { font-family: monospace; }
     </style>
 </head>
 <body>
     <h1>inaneos (WASM mode)</h1>
-    <p>Same integer evaluator as <code>calc</code> on the QEMU build. Click the screen, then type.</p>
-    <div id="screen" tabindex="0">loading...</div>
+    <p>The real userspace (shell/calc/keo) running in your browser. Click the screen, then type <code>help</code>.</p>
+    <div id="screen" tabindex="0"><span class="row">loading...</span></div>
+    <div id="bar"><span id="status">booting...</span> <button id="reboot">reboot</button></div>
     <script>
-      const screen = document.getElementById("screen");
+      // VGA text palette
+      const PAL = ['#000','#00a','#0a0','#0aa','#a00','#a0a','#a50','#aaa',
+                   '#555','#55f','#5f5','#5ff','#f55','#f5f','#ff5','#fff'];
+      const COLS = 80, ROWS = 25, KEY_N = 64;
+      const screen = document.getElementById('screen');
+      const status = document.getElementById('status');
+      let mem = null, cellsPtr = 0, keyqPtr = 0, lastHash = 0;
+      const worker = new Worker('worker.js');
       screen.focus();
 
-      let wasmInstance = null;
-      const memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
-      const importObject = {
-        env: {
-          memory: memory,
-          js_putchar: (c) => {
-            if (c === 8) {
-              const t = screen.textContent;
-              if (t.length > 0) {
-                screen.textContent = t.slice(0, -1);
-              }
-            } else {
-              screen.textContent += String.fromCharCode(c);
+      // key queue lives in shared wasm memory (see wasm/sys_shim.c keyq_t):
+      // UI thread is the producer, the wasm thread consumes.
+      function keyPush(code) {
+        if (!mem || !keyqPtr) return;
+        const q = new Int32Array(mem, keyqPtr, 3 + KEY_N);
+        const h = Atomics.load(q, 0);
+        q[3 + h] = code;
+        Atomics.store(q, 0, (h + 1) % KEY_N);
+        Atomics.add(q, 2, 1);
+        Atomics.notify(q, 2, 1);
+      }
+
+      function esc(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      function render() {
+        if (!mem) { requestAnimationFrame(render); return; }
+        const cells = new Uint16Array(mem, cellsPtr, COLS * ROWS);
+        let h = 0;
+        for (let i = 0; i < cells.length; i++) h = (h * 31 + cells[i]) | 0;
+        if (h !== lastHash) {
+          lastHash = h;
+          let html = '';
+          for (let r = 0; r < ROWS; r++) {
+            let row = '', run = '', rf = -1, rb = -1;
+            const flush = () => {
+              if (run) { row += '<span style="color:' + PAL[rf] + ';background:' + PAL[rb] + '">' + esc(run) + '</span>'; run = ''; }
+            };
+            for (let c = 0; c < COLS; c++) {
+              const v = cells[r * COLS + c];
+              const ch = v & 0xff, at = (v >> 8) & 0xff;
+              const fg = at & 0x0f, bg = (at >> 4) & 0x0f;
+              const g = String.fromCharCode(ch === 0 ? 32 : ch);
+              if (fg !== rf || bg !== rb) { flush(); rf = fg; rb = bg; }
+              run += g;
             }
-          },
-        }
-      };
-      WebAssembly.instantiateStreaming(fetch("inaneos.wasm"), importObject)
-        .then(obj => {
-          wasmInstance = obj.instance.exports;
-          screen.textContent = "";
-          if (typeof wasmInstance.kernel_main === "function") {
-            wasmInstance.kernel_main();
-          } else {
-            screen.textContent = "[X] func kernel_main not found\n";
+            flush();
+            html += '<span class="row">' + row + '</span>';
           }
-        })
-        .catch(err => {
-          screen.textContent = " [X] err loading wasm " + err;
-          console.error(err);
-        });
-      document.addEventListener("keydown", (e) => {
-        if (!wasmInstance || typeof wasmInstance.shell_handle_key !== "function") {
-          return;
+          screen.innerHTML = html;
         }
-        if (e.key === "Enter") {
-          e.preventDefault();
-          wasmInstance.shell_handle_key(10);
-        } else if (e.key === "Backspace") {
-          e.preventDefault();
-          wasmInstance.shell_handle_key(8);
-        } else if (e.key.length === 1) {
-          e.preventDefault();
-          wasmInstance.shell_handle_key(e.key.charCodeAt(0));
-        }
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+
+      worker.onmessage = (e) => {
+        const m = e.data;
+        if (m.t === 'mem') { mem = m.mem; cellsPtr = m.cellsPtr; keyqPtr = m.keyqPtr; lastHash = 0; }
+        else if (m.t === 'ready') { status.textContent = m.disk ? 'running (disk attached)' : 'running (no disk)'; screen.focus(); }
+        else if (m.t === 'rebooted') { status.textContent = 'rebooted'; }
+        else if (m.t === 'halted') { status.textContent = 'halted: safe to power off (press reboot)'; }
+        else if (m.t === 'error') { status.textContent = 'error: ' + m.msg; }
+      };
+      worker.postMessage({ t: 'boot' });
+      document.getElementById('reboot').onclick = () => { status.textContent = 'rebooting...'; worker.postMessage({ t: 'boot' }); };
+
+      // key codes match drivers/keyboard decoded getchar (KEY_* >= 0x80)
+      document.addEventListener('keydown', (e) => {
+        let code = -1;
+        if (e.key === 'Enter') code = 10;
+        else if (e.key === 'Backspace') code = 8;
+        else if (e.key === 'Escape') code = 27;
+        else if (e.key === 'Tab') code = 9;
+        else if (e.key === 'ArrowUp') code = 0x80;
+        else if (e.key === 'ArrowDown') code = 0x81;
+        else if (e.key === 'ArrowLeft') code = 0x82;
+        else if (e.key === 'ArrowRight') code = 0x83;
+        else if (e.key === 'Delete') code = 0x84;
+        else if (e.key.length === 1) code = e.key.charCodeAt(0);
+        if (code >= 0) { e.preventDefault(); keyPush(code); }
       });
+      screen.onclick = () => screen.focus();
     </script>
 </body>
 </html>
