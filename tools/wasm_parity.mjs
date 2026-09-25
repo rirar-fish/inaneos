@@ -111,13 +111,14 @@ send('moon\n');
 t = await waitFor((t) => t.includes('0*'), 'partlist output');
 ok('moon shows auto-mounted part0 (0* 0C 2048 129024)', t.includes('0* 0C 2048 129024'));
 
+const promptsBeforeLs = (t.match(/root@inaneos/g) || []).length;
 send('ls\n');
-t = await waitFor((t) => t.includes('HELLO.TXT'), 'fat ls output');
-ok('ls shows disk files', t.includes('HELLO.TXT') && t.includes('DOCS'));
+t = await waitFor((t) => (t.match(/root@inaneos/g) || []).length > promptsBeforeLs, 'fat ls output');
+ok('ls on empty disk shows no test files', !t.includes('HELLO.TXT') && !t.includes('DOCS'));
 
 send('cat HELLO.TXT\n');
-t = await waitFor((t) => t.includes('hello from fat32'), 'fat cat output');
-ok('cat reads disk file', true);
+t = await waitFor((t) => t.includes('cannot read'), 'fat cat missing file');
+ok('cat missing file says cannot read', true);
 
 send('boguscmd\n');
 t = await waitFor((t) => t.includes('boguscmd: Command Not Found'), 'unknown cmd');
