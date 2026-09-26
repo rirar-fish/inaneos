@@ -2,7 +2,7 @@ CC = gcc
 LD = ld
 
 # one dir = one module
-MODULES = arch/x86_64 drivers/vga drivers/keyboard drivers/ide kernel
+MODULES = arch/x86_64 drivers/vga drivers/keyboard drivers/ide kernel drivers/pci
 INCLUDES = $(addprefix -I,$(MODULES))
 
 CFLAGS = -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone $(INCLUDES)
@@ -19,7 +19,7 @@ GRUB_CFG = boot/grub/grub.cfg
 ISODIR = build/isodir
 
 # user program, own image
-USER_CFLAGS = -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Ikernel -Idrivers/keyboard
+USER_CFLAGS = -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Idrivers/pci -Ikernel -Idrivers/keyboard
 USER_SRCS_C = $(shell find user -name '*.c')
 USER_SRCS_S = $(shell find user -name '*.S')
 USER_OBJS = $(patsubst %.c,build/obj-user/%.o,$(USER_SRCS_C)) $(patsubst %.S,build/obj-user/%.o,$(USER_SRCS_S))
@@ -74,7 +74,7 @@ run: os.iso disk.img
 	qemu-system-x86_64 -cdrom os.iso -drive file=disk.img,format=raw,if=ide -boot order=d
 
 disk.img: tools/mkdisk.sh
-	sh tools/mkdisk.sh
+	bash tools/mkdisk.sh
 
 clean:
 	rm -rf build os.iso

@@ -3,7 +3,8 @@
 #include "keyboard.h"
 #include "syscall.h"
 
-// tiny shell: help, echo, info, reboot, poweroff, ls, cd, mkdir, sin, mem, run, moon, cat, keo
+// tiny shell: help, echo, info, reboot, poweroff, ls, cd, mkdir, sin, mem, run,
+// moon, cat, keo
 static int same_condition(const char *a, const char *b) {
   while (*a && *a == *b) {
     a++;
@@ -136,6 +137,7 @@ static void running(char *line) {
     sys_puts("mem - Show memory:\n");
     sys_puts("run - Run program:\n");
     sys_puts("moon - Mount disk:\n");
+    sys_puts("clear - Clear program\n");
     sys_puts("cat - Show file:\n");
     sys_puts("keo - Edit file:\n");
   } else if (same_condition(line, "echo")) {
@@ -143,6 +145,8 @@ static void running(char *line) {
   } else if (start(line, "echo ")) {
     sys_puts(line + 5);
     sys_puts("\n");
+  } else if (same_condition(line, "clear")) {
+    sys_clear();
   } else if (same_condition(line, "info")) {
     sys_puts("Inaneos beta 0.0 version\n");
   } else if (same_condition(line, "reboot")) {

@@ -1,17 +1,19 @@
 // main kernel
 // module
 
-#include "idt.h"
 #include "exec.h"
 #include "fs.h"
 #include "gdt.h"
+#include "idt.h"
 #include "io.h"
 #include "keyboard.h"
-#include "pmm.h"
 #include "part.h"
+#include "pci.h"
+#include "pmm.h"
 #include "syscall.h"
 #include "vga.h"
 #include <stdint.h>
+
 
 #define MULTIBOOT_BOOTLOADER_MAGIC 0x2BADB002
 #define MULTIBOOT_INFO_MEM_MAP 0x00000040
@@ -76,6 +78,7 @@ void kernel_main(unsigned int magic, unsigned int mbi_addr) {
     pmm_init(mbi->mmap_addr, mbi->mmap_length);
 
   term_init();
+  pci_scan();
   gdt_install();
 
   idt_init();
