@@ -1,4 +1,3 @@
-// syscall entry
 .code64
 .text
 .global syscall_entry

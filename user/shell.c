@@ -144,16 +144,20 @@ static void running(char *line) {
     sys_puts(line + 5);
     sys_puts("\n");
   } else if (same_condition(line, "info")) {
-    sys_puts("Inaneos beta 0.0 version\n");
-  } else if (same_condition(line, "reboot")) {
-    sys_reboot();
-    for (;;)
-      __asm__ volatile("hlt");
+    sys_puts("Inaneos beta 0.0.2 version\n");
+    } else if (same_condition(line, "reboot")) {
+      sys_reboot();
+#ifndef __wasm__
+      for (;;)
+        __asm__ volatile("hlt");
+#endif
   } else if (same_condition(line, "poweroff") ||
-             same_condition(line, "shutdown")) {
-    sys_poweroff();
-    for (;;)
-      __asm__ volatile("hlt");
+              same_condition(line, "shutdown")) {
+      sys_poweroff();
+#ifndef __wasm__
+      for (;;)
+        __asm__ volatile("hlt");
+#endif
   } else if (same_condition(line, "ls")) {
     cmd_ls("");
   } else if (start(line, "ls ")) {

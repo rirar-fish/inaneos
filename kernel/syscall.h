@@ -30,7 +30,6 @@
 // max user bytes per call
 #define SYS_IO_MAX 4096
 
-// stub returns via sysret, kernel must not use wrappers
 
 // regs from stub
 typedef struct {

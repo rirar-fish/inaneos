@@ -1,5 +1,5 @@
 #!/bin/sh
-# 64MB disk, one FAT32 partition, sample files
+# 64MB disk, one empty FAT32 partition
 set -e
 IMG=disk.img
 rm -f "$IMG"
@@ -12,12 +12,5 @@ MTOOLSRC=$(mktemp)
 export MTOOLSRC
 printf 'drive z: file="%s" offset=1048576\n' "$(pwd)/$IMG" > "$MTOOLSRC"
 mformat -F z: >/dev/null
-echo "hello from fat32" > /tmp/HELLO.TXT
-echo "inaneos disk test" > /tmp/README.TXT
-echo "nested file ok" > /tmp/NOTE.TXT
-mcopy /tmp/HELLO.TXT z: >/dev/null
-mcopy /tmp/README.TXT z: >/dev/null
-mmd z:DOCS >/dev/null
-mcopy /tmp/NOTE.TXT z:DOCS >/dev/null
 mdir z:
-rm -f "$MTOOLSRC" /tmp/HELLO.TXT /tmp/README.TXT /tmp/NOTE.TXT
+rm -f "$MTOOLSRC"

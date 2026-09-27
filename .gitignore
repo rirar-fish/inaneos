@@ -3,6 +3,7 @@
 *.d
 *.iso
 *.img
+*.wasm
 !grub.cfg
 build/
 isodir/

@@ -53,7 +53,7 @@ kernel/shell.c/h  // shell run(fs ram only)
 
 ## INSTALATION
 
-- install inaneos in [release](https://github.com/reyzzzl/inaneos/releases/tag/beta-0.0.1)
+- install inaneos in [release](https://github.com/reyzzzl/inaneos/releases/tag/beta-0.0.2)
 ---
 
 how to use:
@@ -81,12 +81,50 @@ just delete non programmed file or compiled file
 
 ---
 
+## Disk system (moon)
+
+
+we make the moon, this like mount in linux if you wanna persistent file
+
+moon is a type partion MBR 1 byte partition format content marker and displayed in hex, but the problem rn is inaneos stay in type c = 0c, which is FAT32 LBA. and the mkdir jst readonly too bc i havent added the FAT driver yet. 
+
+
+<img width="800" height="450" alt="2026-09-2803-36-57-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/1a2d775a-e03d-405d-accc-fb6b8e9bb6d7" />
+
+
+```
+moon // this for checking avaibility disk
+moon o // so this for moon partition o to the disk system
+moon -u // unmount and back to ram file system
+```
+
+---
+## Keo(text editor)
+
+keo is native text editor in inaneos and have ui like neovim, but this is from scratch, and basically we stay the command in keo same like nvim for easily new user 
+
+<img width="800" height="450" alt="2026-09-2803-51-30-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/b09cef31-ca40-40c5-b5e3-c616b1495bc0" />
+
+command keo:
+```
+h j k l // navigation
+i // start typing
+: // mode cmd
+```
+
+mode cmd:
+```
+:w // save and auto exit
+:w namefile // save as and exit
+:q // exit unsaved
+:q! // force exit no save
+:wq // save and exit
+```
+
+---
 
 ## next update
 
-- userspace
-- syscall
 - memory manager
-- disk system
 - scheduler
 - any drivers

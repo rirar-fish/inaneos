@@ -1,4 +1,4 @@
 #pragma once
 
-// integer expression eval, 0 ok
+// integer expression eval
 long expr_eval(const char *s, int *ok);
