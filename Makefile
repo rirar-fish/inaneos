@@ -120,7 +120,7 @@ os.iso: $(KERNEL_ELF) $(USER_ELF) $(CALC_ELF) $(KEO_ELF) $(GRUB_CFG)
 	grub-mkrescue -o os.iso $(ISODIR)
 
 run: os.iso disk.img
-	qemu-system-x86_64 -cdrom os.iso -drive file=disk.img,format=raw,if=ide -boot order=d
+	qemu-system-x86_64 -hda disk.img -cdrom os.iso -boot order=d
 
 disk.img: tools/mkdisk.sh
 	sh tools/mkdisk.sh

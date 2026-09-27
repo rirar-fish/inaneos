@@ -53,7 +53,7 @@ kernel/shell.c/h  // shell run(fs ram only)
 
 ## INSTALATION
 
-- install inaneos in [release](https://github.com/reyzzzl/inaneos/releases/tag/beta-0.0.1)
+- install inaneos in [release](https://github.com/reyzzzl/inaneos/releases/tag/beta-0.0.2)
 ---
 
 how to use:

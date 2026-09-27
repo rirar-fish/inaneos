@@ -159,7 +159,7 @@ long sys_getc(void) {
 }
 
 long sys_info(void) {
-  term_puts("inaneos beta 0.0.1\n");
+  term_puts("inaneos beta 0.0.2\n");
   return 0;
 }
 

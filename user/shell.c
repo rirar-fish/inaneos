@@ -144,7 +144,7 @@ static void running(char *line) {
     sys_puts(line + 5);
     sys_puts("\n");
   } else if (same_condition(line, "info")) {
-    sys_puts("Inaneos beta 0.0 version\n");
+    sys_puts("Inaneos beta 0.0.2 version\n");
     } else if (same_condition(line, "reboot")) {
       sys_reboot();
 #ifndef __wasm__

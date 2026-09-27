@@ -96,7 +96,7 @@ t = await waitFor((t) => t.includes('keo - Edit file:'), 'help output');
 ok('help lists all commands', t.includes('Available Command:') && t.includes('moon - Mount disk:'));
 
 send('info\n');
-t = await waitFor((t) => t.includes('Inaneos beta 0.0 version'), 'info output');
+t = await waitFor((t) => t.includes('Inaneos beta 0.0.2 version'), 'info output');
 ok('info text', true);
 
 send('mem\n');
