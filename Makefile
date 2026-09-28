@@ -72,7 +72,7 @@ os.iso: $(KERNEL_ELF) $(USER_ELF) $(CALC_ELF) $(KEO_ELF) $(GRUB_CFG)
 
 run: os.iso disk.img
 	qemu-system-x86_64 -cdrom os.iso -drive file=disk.img,format=raw,if=ide -boot order=d -nic model=e1000
-
+	
 disk.img: tools/mkdisk.sh
 	bash tools/mkdisk.sh
 
