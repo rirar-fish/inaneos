@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 // fat32 read-only
-int fat_mount(uint64_t part_lba); // 0 ok
+int fat_mount(uint64_t part_lba);
 void fat_unmount(void);
 int fat_mounted(void);
 int fat_list(const char *path, char *out, unsigned long cap);

@@ -1,4 +1,3 @@
-// page mapper
 #include "vmm.h"
 #include "pmm.h"
 
@@ -48,7 +47,7 @@ static int split_large(uint64_t virt) {
     return -1;
   uint64_t *pd = (uint64_t *)(uintptr_t)(pdpt[pdpt_idx] & ~0xFFFUL);
   if (!(pd[pd_idx] & PTE_P) || !(pd[pd_idx] & 0x80))
-    return 0; // already 4KB or missing
+    return 0; // already 4KB OR Missimh
   uint64_t *pt = table_alloc();
   if (!pt)
     return -1;

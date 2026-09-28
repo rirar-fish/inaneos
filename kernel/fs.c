@@ -5,7 +5,7 @@
 
 #define FS_MAX 64
 #define NAME_MAX 32
-// FIXME: ram only, no disk
+
 
 static struct {
   char name[NAME_MAX];
@@ -86,7 +86,7 @@ static int next_part(const char *p, char *out) {
   return i;
 }
 
-// resolve path with ., ..
+// resolve path
 static int resolve(const char *path, int *out) {
   int cur = (*path == '/') ? 0 : cwd;
   const char *p = path;
@@ -162,6 +162,8 @@ static int split_parent(const char *arg, int *pdir, char *leaf) {
   }
   return 0;
 }
+
+
 
 void fs_init(void) {
   for (int i = 0; i < FS_MAX; i++)

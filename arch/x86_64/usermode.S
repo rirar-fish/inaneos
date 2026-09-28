@@ -1,4 +1,3 @@
-// drop to ring3
 .code64
 .text
 .global jump_usermode

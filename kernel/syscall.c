@@ -118,7 +118,7 @@ void syscall_dispatcher(syscall_frame *f) {
     break;
   }
   case SYS_INFO:
-    term_puts("inaneos beta 0.0.1\n");
+    term_puts("inaneos beta 0.0.2\n");
     f->rax = 0;
     break;
   case SYS_REBOOT:
@@ -329,7 +329,7 @@ __attribute__((noreturn)) void cpu_reboot(void) {
     __asm__ volatile("hlt");
 }
 
-// qemu off, else halt
+//  off
 __attribute__((noreturn)) void cpu_poweroff(void) {
   outw(0x604, 0x2000);
   term_puts("safe to power off\n");

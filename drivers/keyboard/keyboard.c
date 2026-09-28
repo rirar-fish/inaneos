@@ -46,7 +46,6 @@ static int e0;
 static int shift;
 static int caps;
 
-// pure decode, host-testable
 // out: 0 drop, else char (or KEY_*)
 int kbd_decode(unsigned char sc, int *e0s, int *shifts, int *capsv) {
   if (sc == 0xE0) {
