@@ -24,7 +24,7 @@ pml4:
 pdpt:
 .skip 4096
 pd:
-.skip 4096
+.skip 16384
 .align 16
 stack_bottom:
 .skip 16384 # stack
@@ -45,7 +45,7 @@ _start:
 
     movl $pd, %edi
     movl $0x83, %eax
-    movl $512, %ecx
+    movl $2048, %ecx
 1:
     movl %eax, (%edi)
     addl $0x200000, %eax
@@ -55,7 +55,12 @@ _start:
     movl $pdpt, %edi
     movl $pd, %eax
     orl $0x07, %eax
+    movl $4, %ecx
+2:
     movl %eax, (%edi)
+    addl $4096, %eax
+    addl $8, %edi
+    loop 2b
 
     movl $pml4, %edi
     movl $pdpt, %eax

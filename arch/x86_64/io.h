@@ -28,3 +28,13 @@ static inline void io_wait() {
   // short delay
   __asm__ volatile("outb %%al, $0x80" : : "a"(0));
 }
+
+static inline uint32_t inl(unsigned port) {
+  uint32_t ret;
+  __asm__ volatile("inl %1, %0" : "=a"(ret) : "Nd"(port));
+  return ret;
+}
+
+static inline void outl(unsigned short port, uint32_t val) {
+  __asm__ volatile("outl %0, %1" : : "a"(val), "Nd"(port));
+}

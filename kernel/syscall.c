@@ -3,10 +3,10 @@
 #include "exec.h"
 #include "fat.h"
 #include "fs.h"
-#include "part.h"
 #include "io.h"
 #include "keyboard.h"
 #include "msr.h"
+#include "part.h"
 #include "pmm.h"
 #include "vga.h"
 
@@ -90,6 +90,13 @@ void syscall_dispatcher(syscall_frame *f) {
     f->rax = 0;
     break;
   }
+
+  case SYS_CLEAR: {
+    term_clear();
+    f->rax = 0;
+    break;
+  }
+
   case SYS_WRITE: {
     const char *s = (const char *)(uintptr_t)f->rdi;
     uint64_t n = f->rsi;

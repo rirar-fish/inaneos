@@ -1,4 +1,17 @@
+<<<<<<< Updated upstream
 # INANE OS
+=======
+Hi,
+Here's what I do in 1 week:
+1. 
+2. I worked to fix in another file
+3. i helped teammates to debug the file
+4. I worked on 
+5. I add more commands, like pwd, cat, touch, auth, ect. 
+
+<p align="center">
+<b>INANE OS </b>
+>>>>>>> Stashed changes
 
 ![Status Version](https://img.shields.io/badge/Status-Beta-blue.svg)
 ![os](https://img.shields.io/badge/Type-Os-red.svg)
@@ -77,6 +90,7 @@ make clean
 ```
 
 > description:
+<<<<<<< Updated upstream
 just delete non programmed file or compiled file
 
 ---
@@ -128,3 +142,6 @@ mode cmd:
 - memory manager
 - scheduler
 - any drivers
+=======
+just delete it bro,
+>>>>>>> Stashed changes

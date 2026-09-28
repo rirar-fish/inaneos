@@ -22,6 +22,7 @@
 #define SYS_FREAD 17
 #define SYS_GOTO 18
 #define SYS_FWRITE 19
+#define SYS_CLEAR 20
 
 // err codes
 #define E_INVAL -22
@@ -72,9 +73,7 @@ static inline long sys_call2(long n, long a1, long a2) {
   return sys_call3(n, a1, a2, 0);
 }
 
-static inline long sys_call1(long n, long a1) {
-  return sys_call2(n, a1, 0);
-}
+static inline long sys_call1(long n, long a1) { return sys_call2(n, a1, 0); }
 
 static inline long sys_call0(long n) { return sys_call1(n, 0); }
 
@@ -114,12 +113,13 @@ static inline long sys_run(const char *name, const char *arg) {
 static inline long sys_lsmod(char *buf, unsigned long cap) {
   return sys_call2(SYS_LSMOD, (long)buf, (long)cap);
 }
+
+static inline long sys_clear(void) { return sys_call0(SYS_CLEAR); }
+
 static inline long sys_partlist(char *buf, unsigned long cap) {
   return sys_call2(SYS_PARTLIST, (long)buf, (long)cap);
 }
-static inline long sys_mount(long idx) {
-  return sys_call1(SYS_MOUNT, idx);
-}
+static inline long sys_mount(long idx) { return sys_call1(SYS_MOUNT, idx); }
 static inline long sys_fread(const char *p, char *buf, unsigned long cap) {
   return sys_call3(SYS_FREAD, (long)p, (long)buf, (long)cap);
 }
