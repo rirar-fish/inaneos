@@ -1,6 +1,4 @@
-
-<p align="center">
-<b>INANE OS </b>
+# INANE OS
 
 ![Status Version](https://img.shields.io/badge/Status-Beta-blue.svg)
 ![os](https://img.shields.io/badge/Type-Os-red.svg)
@@ -79,7 +77,6 @@ make clean
 ```
 
 > description:
-<<<<<<< Updated upstream
 just delete non programmed file or compiled file
 
 ---
@@ -131,4 +128,3 @@ mode cmd:
 - memory manager
 - scheduler
 - any drivers
-=======
