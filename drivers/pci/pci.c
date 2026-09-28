@@ -81,11 +81,10 @@ int find_device(uint16_t vendor_id, uint16_t device_id, device_s *device) {
           device->func = func;
 
           device->vendor_id = vendor;
-          device->device_id = found_device;
-
-          device->class_code = (uint8_t)config_read16(bus, slot, func, CLASS);
-
-          device->subclass = (uint8_t)config_read16(bus, slot, func, SUBCLASS);
+          device->device_id = config_read16(bus, slot, func, DEVICE_ID);
+          uint32_t class_reg = config_read32(bus, slot, func, 0x08);
+          device->subclass = (class_reg >> 16) & 0xFF;
+          device->class_code = (class_reg >> 24) & 0xFF;
 
           for (int i = 0; i < 6; i++) {
             device->bar[i] = config_read32(bus, slot, func, BAR0 + (i * 4));
@@ -150,5 +149,4 @@ void pci_scan(void) {
   }
 
   term_puts("PCI scan complete.\n");
-  term_clear();
 }

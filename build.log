@@ -1,0 +1,85 @@
+mkdir -p build/obj/arch/x86_64/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c arch/x86_64/gdt.c -o build/obj/arch/x86_64/gdt.o
+mkdir -p build/obj/arch/x86_64/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c arch/x86_64/idt.c -o build/obj/arch/x86_64/idt.o
+mkdir -p build/obj/arch/x86_64/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c arch/x86_64/vmm.c -o build/obj/arch/x86_64/vmm.o
+mkdir -p build/obj/drivers/vga/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/vga/vga.c -o build/obj/drivers/vga/vga.o
+mkdir -p build/obj/drivers/keyboard/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/keyboard/keyboard.c -o build/obj/drivers/keyboard/keyboard.o
+mkdir -p build/obj/drivers/ide/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/ide/ide.c -o build/obj/drivers/ide/ide.o
+mkdir -p build/obj/drivers/nic/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/nic/e1000.c -o build/obj/drivers/nic/e1000.o
+mkdir -p build/obj/drivers/nic/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/nic/nic.c -o build/obj/drivers/nic/nic.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/elf.c -o build/obj/kernel/elf.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/exec.c -o build/obj/kernel/exec.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/fat.c -o build/obj/kernel/fat.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/fs.c -o build/obj/kernel/fs.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/kernel.c -o build/obj/kernel/kernel.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/part.c -o build/obj/kernel/part.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/pmm.c -o build/obj/kernel/pmm.o
+mkdir -p build/obj/kernel/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c kernel/syscall.c -o build/obj/kernel/syscall.o
+mkdir -p build/obj/drivers/pci/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/pci/pci.c -o build/obj/drivers/pci/pci.o
+mkdir -p build/obj/drivers/net/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c drivers/net/ethernet.c -o build/obj/drivers/net/ethernet.o
+mkdir -p build/obj/arch/x86_64/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c arch/x86_64/boot.S -o build/obj/arch/x86_64/boot.o
+mkdir -p build/obj/arch/x86_64/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c arch/x86_64/syscall.S -o build/obj/arch/x86_64/syscall.o
+mkdir -p build/obj/arch/x86_64/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iarch/x86_64 -Idrivers/vga -Idrivers/keyboard -Idrivers/ide -Idrivers/nic -Ikernel -Idrivers/pci -Idrivers/net -c arch/x86_64/usermode.S -o build/obj/arch/x86_64/usermode.o
+ld -m elf_x86_64 -T arch/x86_64/linker.ld -o build/kernel.elf build/obj/arch/x86_64/gdt.o build/obj/arch/x86_64/idt.o build/obj/arch/x86_64/vmm.o build/obj/drivers/vga/vga.o build/obj/drivers/keyboard/keyboard.o build/obj/drivers/ide/ide.o build/obj/drivers/nic/e1000.o build/obj/drivers/nic/nic.o build/obj/kernel/elf.o build/obj/kernel/exec.o build/obj/kernel/fat.o build/obj/kernel/fs.o build/obj/kernel/kernel.o build/obj/kernel/part.o build/obj/kernel/pmm.o build/obj/kernel/syscall.o build/obj/drivers/pci/pci.o build/obj/drivers/net/ethernet.o build/obj/arch/x86_64/boot.o build/obj/arch/x86_64/syscall.o build/obj/arch/x86_64/usermode.o
+ld: warning: build/obj/arch/x86_64/usermode.o: missing .note.GNU-stack section implies executable stack
+ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+ld: warning: build/kernel.elf has a LOAD segment with RWX permissions
+mkdir -p build/obj-user/user/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Idrivers/pci -Ikernel -Idrivers/keyboard -c user/shell.c -o build/obj-user/user/shell.o
+mkdir -p build/obj-user/user/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Idrivers/pci -Ikernel -Idrivers/keyboard -c user/_start.S -o build/obj-user/user/_start.o
+ld -m elf_x86_64 -static -z noexecstack -T user/user.ld -o build/user.elf build/obj-user/user/shell.o build/obj-user/user/_start.o
+ld: warning: build/user.elf has a LOAD segment with RWX permissions
+mkdir -p build/obj-user/user/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Idrivers/pci -Ikernel -Idrivers/keyboard -c user/calc.c -o build/obj-user/user/calc.o
+mkdir -p build/obj-user/user/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Idrivers/pci -Ikernel -Idrivers/keyboard -c user/expr.c -o build/obj-user/user/expr.o
+ld -m elf_x86_64 -static -z noexecstack -T user/user.ld -o build/calc.elf build/obj-user/user/calc.o build/obj-user/user/expr.o build/obj-user/user/_start.o
+ld: warning: build/calc.elf has a LOAD segment with RWX permissions
+mkdir -p build/obj-user/user/
+gcc -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone -Iuser -Idrivers/pci -Ikernel -Idrivers/keyboard -c user/keo.c -o build/obj-user/user/keo.o
+ld -m elf_x86_64 -static -z noexecstack -T user/user.ld -o build/keo.elf build/obj-user/user/keo.o build/obj-user/user/_start.o
+ld: warning: build/keo.elf has a LOAD segment with RWX permissions
+mkdir -p build/isodir/boot/grub
+cp build/kernel.elf build/isodir/boot/
+cp build/user.elf build/isodir/boot/
+cp build/calc.elf build/isodir/boot/
+cp build/keo.elf build/isodir/boot/
+cp boot/grub/grub.cfg build/isodir/boot/grub/grub.cfg
+grub-mkrescue -o os.iso build/isodir
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev 'stdio:os.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  166m free
+Added to ISO image: directory '/'='/tmp/grub.gIR4ic'
+xorriso : UPDATE :     295 files added in 1 seconds
+Added to ISO image: directory '/'='/mnt/c/Users/sncthyz/inaneos/build/isodir'
+xorriso : UPDATE :     302 files added in 1 seconds
+xorriso : NOTE : Copying to System Area: 512 bytes from file '/usr/lib/grub/i386-pc/boot_hybrid.img'
+xorriso : UPDATE :  61.98% done
+ISO image produced: 2633 sectors
+Written to medium : 2633 sectors at LBA 0
+Writing to 'stdio:os.iso' completed successfully.
+

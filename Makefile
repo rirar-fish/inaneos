@@ -2,7 +2,7 @@ CC = gcc
 LD = ld
 
 # one dir = one module
-MODULES = arch/x86_64 drivers/vga drivers/keyboard drivers/ide kernel drivers/pci
+MODULES = arch/x86_64 drivers/vga drivers/keyboard drivers/ide drivers/nic kernel drivers/pci drivers/net
 INCLUDES = $(addprefix -I,$(MODULES))
 
 CFLAGS = -m64 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -O2 -Wall -Wshadow -g -MMD -MP -mgeneral-regs-only -mno-red-zone $(INCLUDES)
@@ -71,7 +71,7 @@ os.iso: $(KERNEL_ELF) $(USER_ELF) $(CALC_ELF) $(KEO_ELF) $(GRUB_CFG)
 	grub-mkrescue -o os.iso $(ISODIR)
 
 run: os.iso disk.img
-	qemu-system-x86_64 -cdrom os.iso -drive file=disk.img,format=raw,if=ide -boot order=d
+	qemu-system-x86_64 -cdrom os.iso -drive file=disk.img,format=raw,if=ide -boot order=d -nic model=e1000
 
 disk.img: tools/mkdisk.sh
 	bash tools/mkdisk.sh
